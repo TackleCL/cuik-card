@@ -1,6 +1,17 @@
 {
   "hosting": {
     "target": "card_public",
+    "headers": [
+      {
+        "source": "*/.@(jpg|jpeg|gif|png)",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
+      }
+    ],
     "rewrites": [
       {
         "source": "**",
@@ -8,10 +19,6 @@
       }
     ],
     "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
   }
 }
