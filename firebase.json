@@ -1,6 +1,12 @@
 {
   "hosting": {
     "target": "card_public",
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
     "public": "dist",
     "ignore": [
       "firebase.json",
