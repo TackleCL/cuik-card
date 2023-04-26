@@ -150,18 +150,18 @@ export default {
     async downloadCard() {
 
       // image
-      let image = null
+      let image = ''
       if (this.profile.image) { image = await this.format64(this.profile.image) }
 
       const vCardData = `BEGIN:VCARD
 VERSION:3.0
 N:${this.profile.displayName}
-TEL;TYPE=WORK,VOICE:${this.profile.contact.workPhone}
-TEL;TYPE=HOME,VOICE:${this.profile.contact.homePhone}
+TEL;TYPE=WORK,VOICE:${this.profile.contact.workPhone ? this.profile.contact.workPhone : ''}
+TEL;TYPE=HOME,VOICE:${this.profile.contact.homePhone ? this.profile.contact.homePhone : ''}
 EMAIL:${this.profile.email}
 ORG:${this.profile.org}
 TITLE:${this.profile.title}
-URL;TYPE=Personal:${this.profile.contact.homeUrl}
+URL;TYPE=Personal:${this.profile.contact.homeUrl ? this.profile.contact.homeUrl : ''}
 PHOTO;ENCODING=b;TYPE=JPEG:${image.imageData}
 X-SOCIALPROFILE;TYPE=LinkedIn:http://www.linkedin.com/in/juanmaurelia
 X-SOCIALPROFILE;TYPE=Instagram:http://www.instagram.com/cuikchile
