@@ -30,6 +30,11 @@
           </h2>
         </div>
 
+        <v-btn large block dark class="mt-6 rounded-xl" color="primary" @click="downloadCard" :loading="isLoading"
+          :disabled="isLoading">
+          Descargar Contacto
+        </v-btn>
+
         <!-- social-information -->
         <div class="profile-social mt-6" v-if="profile.social">
           <v-subheader class="px-0 align-center">
@@ -137,11 +142,59 @@ export default {
 
   data: () => ({
     profile: {},
-    loading: false
+    loading: true,
+    isLoading: false
   }),
 
+  methods: {
+    async downloadCard() {
+
+      // image
+      let image = null
+      if (this.profile.image) { image = await this.format64(this.profile.image) }
+
+      const vCardData = `BEGIN:VCARD
+VERSION:3.0
+N:${this.profile.displayName}
+TEL;TYPE=WORK,VOICE:${this.profile.contact.workPhone}
+TEL;TYPE=HOME,VOICE:${this.profile.contact.homePhone}
+EMAIL:${this.profile.email}
+ORG:${this.profile.org}
+TITLE:${this.profile.title}
+URL;TYPE=Personal:${this.profile.contact.homeUrl}
+PHOTO;ENCODING=b;TYPE=JPEG:${image.imageData}
+X-SOCIALPROFILE;TYPE=LinkedIn:http://www.linkedin.com/in/juanmaurelia
+X-SOCIALPROFILE;TYPE=Instagram:http://www.instagram.com/cuikchile
+END:VCARD`;
+
+      const element = document.createElement("a");
+      const file = new Blob([vCardData], { type: "text/vcard" });
+      element.href = URL.createObjectURL(file);
+      element.download = `${this.profile.displayName.replace(/\s+/g, "_")}.vcf`;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    },
+
+    format64(urlImagen) {
+      return new Promise(resolve => {
+        fetch(urlImagen)
+          .then(response => response.blob())
+          .then(blob => {
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => {
+              let base64data = reader.result;
+              base64data = base64data.split(',')[1];
+              const extension = urlImagen.split('.').pop().split(/#|\?/)[0].toUpperCase();
+              resolve({ imageData: base64data, imageType: extension })
+            }
+          });
+      })
+    }
+  },
+
   async mounted() {
-    this.loading = true
     if (this.$route.params.id === undefined) return;
 
     const docRef = doc(db, "users", this.$route.params.id);
