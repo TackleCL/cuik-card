@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "my-cuik"
+  },
+  "targets": {
+    "my-cuik": {
+      "hosting": {
+        "card_public": [
+          "card-cuik"
+        ]
+      }
+    }
+  }
+}
