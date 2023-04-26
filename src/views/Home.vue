@@ -150,21 +150,29 @@ export default {
     async downloadCard() {
 
       // image
-      let image = ''
+      let image = null
       if (this.profile.image) { image = await this.format64(this.profile.image) }
+
+      // name
+      const fullName = this.profile.displayName;
+      const names = fullName.split(' ');
+      const lastName = names[names.length - 1];
+      const firstName = names.slice(0, -1).join(' ');
 
       const vCardData = `BEGIN:VCARD
 VERSION:3.0
-N:${this.profile.displayName}
+N:${lastName};${firstName};;;
+FN:${this.profile.displayName}
 TEL;TYPE=WORK,VOICE:${this.profile.contact.workPhone ? this.profile.contact.workPhone : ''}
 TEL;TYPE=HOME,VOICE:${this.profile.contact.homePhone ? this.profile.contact.homePhone : ''}
 EMAIL:${this.profile.email}
 ORG:${this.profile.org}
 TITLE:${this.profile.title}
 URL;TYPE=Personal:${this.profile.contact.homeUrl ? this.profile.contact.homeUrl : ''}
-PHOTO;ENCODING=b;TYPE=JPEG:${image.imageData}
-X-SOCIALPROFILE;TYPE=LinkedIn:http://www.linkedin.com/in/juanmaurelia
-X-SOCIALPROFILE;TYPE=Instagram:http://www.instagram.com/cuikchile
+${image ? 'PHOTO;ENCODING=b;TYPE=JPEG:' + image.imageData : null}
+URL;TYPE=WORK:https://www.linkedin.com/in/nombre.apellido/
+URL;TYPE=INSTAGRAM:https://www.instagram.com/nombre.apellido/
+URL;TYPE=YOUTUBE:https://www.youtube.com/user/nombreapellido
 END:VCARD`;
 
       const element = document.createElement("a");
