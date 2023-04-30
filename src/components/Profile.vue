@@ -185,8 +185,8 @@ export default {
             reader.onloadend = () => {
               let base64data = reader.result;
               base64data = base64data.split(',')[1];
-              const extension = urlImagen.split('.').pop().split(/#|\?/)[0].toUpperCase();
-              resolve({image: base64data, type: extension})
+              //const extension = urlImagen.split('.').pop().split(/#|\?/)[0].toUpperCase();
+              resolve(base64data)
             }
           });
       })
