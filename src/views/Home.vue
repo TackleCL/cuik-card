@@ -30,11 +30,12 @@ export default {
   methods: {
     async onInit(url) {
 
+
       // Buscar por URL
       const q1 = query(collection(db, "users"), where("url", "==", url));
       const querySnapshot1 = await getDocs(q1);
       if (!querySnapshot1.empty) {
-        this.profile = querySnapshot1.docs[0].data();
+        this.profile = {contact: [], social: [], ...querySnapshot1.docs[0].data()};
         return;
       }
 
@@ -42,7 +43,7 @@ export default {
       const q3 = query(collection(db, "users"), where("cardID", "==", url));
       const querySnapshot3 = await getDocs(q3);
       if (!querySnapshot3.empty) {
-        this.profile = querySnapshot3.docs[0].data();
+          this.profile = {contact: [], social: [], ...querySnapshot1.docs[0].data()};
         return;
       }
 

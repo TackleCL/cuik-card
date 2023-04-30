@@ -1,7 +1,7 @@
 <template>
     <div id="profile">
         <!--cover-->
-        <v-card flat dark class="rounded-b-0 rounded-t-xl" height="180"></v-card>
+        <v-card flat  tile color="indigo" height="180"></v-card>
 
         <!--content-->
         <v-container>
@@ -125,6 +125,7 @@
                     </div>
                 </v-card-text>
             </v-card>
+            11
         </v-container>
 
         <!-- loading -->
@@ -164,7 +165,8 @@ export default {
       const element = document.createElement("a");
       const file = new Blob([vCardData], {type: "text/vcard"});
       element.href = URL.createObjectURL(file);
-      element.download = `${this.item.lastname.replace(/\s+/g, "_")}.vcf`;
+      element.download = `contacto.vcf`;
+      //element.download = `${this.item.lastname.replace(/\s+/g, "_")}.vcf`;
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
@@ -183,8 +185,8 @@ export default {
             reader.onloadend = () => {
               let base64data = reader.result;
               base64data = base64data.split(',')[1];
-              const extension = urlImagen.split('.').pop().split(/#|\?/)[0].toUpperCase();
-              resolve({image: base64data, type: extension})
+              //const extension = urlImagen.split('.').pop().split(/#|\?/)[0].toUpperCase();
+              resolve(base64data)
             }
           });
       })
@@ -192,19 +194,22 @@ export default {
 
     createCard(objeto) {
 
+        console.debug('PHOTO: ', objeto.photo ? objeto.photo : 'DONT_PHOTO')
+
+
       const vcard = [
         'BEGIN:VCARD',
         'VERSION:3.0',
         `N:${objeto.lastname};${objeto.firstname};;;`,
         `FN:${objeto.firstname} ${objeto.lastname}`,
-        `TEL;TYPE=Trabajo,VOICE:${objeto.contact.tel_work ? objeto.contact.tel_work : ''}`,
-        `TEL;TYPE=Personal:${objeto.contact.tel_home ? objeto.contact.tel_home : ''}`,
-        `EMAIL:${objeto.contact.email}`,
-        `EMAIL;TYPE=Trabajo:${objeto.contact.email_work}`,
-        `ORG:${objeto.organization ? objeto.organization : ''}`,
-        `TITLE:${objeto.title}`,
-        `URL;TYPE=Personal:${objeto.contact.web ? objeto.contact.web : ''}`,
-        `${objeto.photo ? 'PHOTO;ENCODING=b;TYPE=JPEG:' + objeto.photo : null}`,
+          `ORG:${objeto.organization ? objeto.organization : ''}`,
+          `TITLE:${objeto.title ? objeto.title : ''}`,
+          `TEL;TYPE=Personal:${objeto.contact.tel_home ? '+' + 56 + objeto.contact.tel_home : ''}`,
+          `TEL;TYPE=Trabajo,VOICE:${objeto.contact.tel_work ? '+' + 56 +objeto.contact.tel_work : ''}`,
+          `EMAIL;TYPE=Personal:${objeto.contact.email ? objeto.contact.email : ''}`,
+          `EMAIL;TYPE=Trabajo:${objeto.contact.email_work ? objeto.contact.email_work : ''}`,
+          `URL;TYPE=Sitio Web:${objeto.contact.web ? objeto.contact.web : ''}`,
+          `${objeto.photo ? 'PHOTO;ENCODING=b;TYPE=JPEG:' + objeto.photo : ''}`,
       ];
 
       if (objeto.social && objeto.social.length > 0) {
