@@ -194,6 +194,8 @@ export default {
 
     createCard(objeto) {
 
+        console.debug('PHOTO: ', objeto.photo ? objeto.photo : 'DONT_PHOTO')
+
 
       const vcard = [
         'BEGIN:VCARD',
@@ -207,6 +209,7 @@ export default {
           `EMAIL;TYPE=Personal:${objeto.contact.email ? objeto.contact.email : ''}`,
           `EMAIL;TYPE=Trabajo:${objeto.contact.email_work ? objeto.contact.email_work : ''}`,
           `URL;TYPE=Sitio Web:${objeto.contact.web ? objeto.contact.web : ''}`,
+          `${objeto.photo ? 'PHOTO;ENCODING=b;TYPE=JPEG:' + objeto.photo : ''}`,
       ];
 
       if (objeto.social && objeto.social.length > 0) {
