@@ -17,7 +17,7 @@ export default {
         name: "YouTube",
         icon: "mdi-youtube",
         color: "red",
-        hint: "https://www.youtube.com/channel/",
+        hint: "https://www.youtube.com/@",
       },
       {
         name: "LinkedIn",
@@ -29,7 +29,7 @@ export default {
   }),
 
   methods: {
-    socialSelected(item) {
+    selected(item) {
       return this.social.find((x) => x.name === item.name);
     },
   },
