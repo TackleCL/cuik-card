@@ -43,7 +43,7 @@ export default {
       const q3 = query(collection(db, "users"), where("cardID", "==", url));
       const querySnapshot3 = await getDocs(q3);
       if (!querySnapshot3.empty) {
-          this.profile = {contact: [], social: [], ...querySnapshot1.docs[0].data()};
+        this.profile = {contact: [], social: [], ...querySnapshot1.docs[0].data()};
         return;
       }
 

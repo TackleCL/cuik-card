@@ -1,151 +1,173 @@
 <template>
     <div id="profile">
-        <!--cover-->
-        <v-card flat  tile color="indigo" height="180"></v-card>
+        <!--cover/meta-->
+        <meta name="theme-color" :content="themeColor" v-if="themeColor">
+        <v-card flat tile :color="themeColor" height="150"></v-card>
 
         <!--content-->
         <v-container>
-            <v-card flat style="margin-top: -90px" class="mb-8">
-
-                <!-- info: basic -->
-                <v-list-item two-line>
+            <v-row justify="center">
+                <v-col cols="12" md="6" lg="5">
 
                     <!-- photo -->
-                    <v-list-item-avatar class="rounded" size="100" style="margin-top: -40px">
-                        <v-img :alt="`${data.lastname} avatar`" :src="data.photo" v-if="data.photo"/>
-                        <v-icon class="grey lighten-1" large dark v-else>mdi-account-outline</v-icon>
-                    </v-list-item-avatar>
+                    <div class="content-photo d-flex justify-center" style="margin-top: -105px">
+                        <v-avatar size="180" color="grey lighten-4">
 
-                    <!-- info -->
-                    <v-list-item-content>
-                        <v-list-item-title class="font-weight-medium text-h6">
-                            {{ `${data.firstname} ${data.lastname}` }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle class="text-subtitle-1">
-                            {{ data.title }} <span v-if="data.organization">• {{ data.organization }}</span>
-                        </v-list-item-subtitle>
-                    </v-list-item-content>
-                </v-list-item>
+                            <v-img :src="data.photo" :lazy-src="data.photo" v-if="data.photo" :alt="data.lastname">
+                                <template v-slot:placeholder>
+                                    <v-row class="fill-height ma-0" align="center" justify="center">
+                                        <v-progress-circular indeterminate color="black"/>
+                                    </v-row>
+                                </template>
+                            </v-img>
 
-                <!-- information -->
-                <v-card-text class="black--text">
-                    <v-btn large dark block depressed @click="downloadCard">
-                        Agregar a contacto
-                    </v-btn>
+                            <v-icon class="grey lighten-1" x-large dark v-else>mdi-account-outline</v-icon>
+                        </v-avatar>
+                    </div>
+
+                    <!-- basic -->
+                    <div class="profile-basic text-center mt-6">
+                        <h1 class="text-h4 font-weight-medium">Juan Maurelia</h1>
+                        <h6 class="text-subtitle-1 text--secondary">Diseñador UX <span>- Arauco</span></h6>
+                    </div>
 
                     <!-- social -->
-                    <div class="profile-social mt-4 mb-9">
-                        <h3 class="text-subtitle-1 font-weight-medium mb-2">Redes Sociales</h3>
+                    <div class="profile-social text-center mt-6" v-if="data.social">
                         <template v-for="(item, index) in data.social">
-                            <v-btn :key="index" fab depressed color="grey lighten-3" class="rounded mr-3"
-                                   :href="selected(item).hint + item.username" target="_blank">
-                                <v-icon :color="selected(item).color">{{ selected(item).icon }}</v-icon>
+                            <v-btn fab depressed color="blue-grey lighten-5" class="rounded-lg mx-2" :key="index">
+                                <v-icon class="text-h4" :color="selected(item).color">{{ selected(item).icon }}</v-icon>
                             </v-btn>
                         </template>
                     </div>
 
-                    <!-- contact -->
-                    <div class="contact">
-                        <h3 class="text-subtitle-1 font-weight-medium mb-2">Información de Contacto</h3>
-
-                        <!-- tel-->
-                        <div class="tel" v-if="item.contact.tel_home">
-                            <v-list-item class="px-0">
-                                <v-list-item-icon>
-                                    <v-icon>mdi-phone-outline</v-icon>
-                                </v-list-item-icon>
-                                <v-list-item-content>
-                                    <v-list-item-subtitle class="font-weight-medium">Trabajo</v-list-item-subtitle>
-                                    <v-list-item-title class="font-weight-medium">+56 {{ item.contact.tel_home }}
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                            <v-divider/>
-                        </div>
-
-                        <!-- tel: work-->
-                        <div class="tel" v-if="item.contact.tel_work">
-                            <v-list-item class="px-0">
-                                <v-list-item-icon>
-                                    <v-icon>mdi-phone-outline</v-icon>
-                                </v-list-item-icon>
-                                <v-list-item-content>
-                                    <v-list-item-subtitle class="font-weight-medium">Trabajo</v-list-item-subtitle>
-                                    <v-list-item-title class="font-weight-medium">+56 {{ item.contact.tel_work }}
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                            <v-divider/>
-                        </div>
-
-                        <!-- email-->
-                        <div class="tel" v-if="item.contact.email">
-                            <v-list-item class="px-0">
-                                <v-list-item-icon>
-                                    <v-icon>mdi-email-outline</v-icon>
-                                </v-list-item-icon>
-                                <v-list-item-content>
-                                    <v-list-item-subtitle class="font-weight-medium">Trabajo</v-list-item-subtitle>
-                                    <v-list-item-title class="font-weight-medium">{{ item.contact.email }}
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                            <v-divider/>
-                        </div>
-
-                        <!-- email: work-->
-                        <div class="tel" v-if="item.contact.email_work">
-                            <v-list-item class="px-0">
-                                <v-list-item-icon>
-                                    <v-icon>mdi-email-outline</v-icon>
-                                </v-list-item-icon>
-                                <v-list-item-content>
-                                    <v-list-item-subtitle class="font-weight-medium">Trabajo</v-list-item-subtitle>
-                                    <v-list-item-title class="font-weight-medium">{{ item.contact.email_work }}
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                            <v-divider/>
-                        </div>
-
-                        <!-- web-->
-                        <div class="tel" v-if="item.contact.web">
-                            <v-list-item class="px-0">
-                                <v-list-item-icon>
-                                    <v-icon>mdi-web</v-icon>
-                                </v-list-item-icon>
-                                <v-list-item-content>
-                                    <v-list-item-subtitle class="font-weight-medium">Trabajo</v-list-item-subtitle>
-                                    <v-list-item-title class="font-weight-medium">{{ item.contact.web }}
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                            <v-divider/>
-                        </div>
+                    <!-- button -->
+                    <div class="profile-button px-4 mt-6">
+                        <v-btn x-large dark :color="themeColor" block rounded depressed @click="downloadCard"
+                               class="font-weight-bold">
+                            Agregar Contacto
+                        </v-btn>
                     </div>
-                </v-card-text>
-            </v-card>
-            11
+
+                    <!-- contact -->
+                    <div class="profile-contact px-4 mt-6">
+
+                        <h3 class="text-subtitle-1 font-weight-medium mb-3">Información</h3>
+
+                        <!-- tel -->
+                        <v-card flat v-if="item.contact.tel_home" class="mb-3">
+                            <v-list-item class="px-2">
+                                <v-list-item-avatar class="grey lighten-2 rounded" size="47">
+                                    <v-icon>mdi-phone-outline</v-icon>
+                                </v-list-item-avatar>
+                                <v-list-item-content>
+                                    <v-list-item-subtitle class="font-weight-medium">Teléfono</v-list-item-subtitle>
+                                    <v-list-item-title class="font-weight-medium text-subtitle-1">
+                                        +56 {{ item.contact.tel_home }}
+                                    </v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-card>
+                        <!-- tel: work -->
+                        <v-card flat v-if="item.contact.tel_work" class="mb-3">
+                            <v-list-item class="px-2">
+                                <v-list-item-avatar class="grey lighten-2 rounded" size="47">
+                                    <v-icon>mdi-phone-outline</v-icon>
+                                </v-list-item-avatar>
+                                <v-list-item-content>
+                                    <v-list-item-subtitle class="font-weight-medium">Trabajo</v-list-item-subtitle>
+                                    <v-list-item-title class="font-weight-medium text-subtitle-1">
+                                        +56 {{ item.contact.tel_work }}
+                                    </v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-card>
+                        <!-- email-->
+                        <v-card flat v-if="item.contact.email" class="mb-3">
+                            <v-list-item class="px-2">
+                                <v-list-item-avatar class="grey lighten-2 rounded" size="47">
+                                    <v-icon>mdi-email-outline</v-icon>
+                                </v-list-item-avatar>
+                                <v-list-item-content>
+                                    <v-list-item-subtitle class="font-weight-medium">Correo</v-list-item-subtitle>
+                                    <v-list-item-title class="font-weight-medium text-subtitle-1">
+                                        {{ item.contact.email }}
+                                    </v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-card>
+                        <!-- email: work-->
+                        <v-card flat v-if="item.contact.email_work" class="mb-3">
+                            <v-list-item class="px-2">
+                                <v-list-item-avatar class="grey lighten-2 rounded" size="47">
+                                    <v-icon>mdi-email-outline</v-icon>
+                                </v-list-item-avatar>
+                                <v-list-item-content>
+                                    <v-list-item-subtitle class="font-weight-medium">Trabajo</v-list-item-subtitle>
+                                    <v-list-item-title class="font-weight-medium text-subtitle-1">
+                                        {{ item.contact.email_work }}
+                                    </v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-card>
+                        <!-- web-->
+                        <v-card flat v-if="item.contact.web" class="mb-3">
+                            <v-list-item class="px-2">
+                                <v-list-item-avatar class="grey lighten-2 rounded" size="47">
+                                    <v-icon>mdi-web</v-icon>
+                                </v-list-item-avatar>
+                                <v-list-item-content>
+                                    <v-list-item-subtitle class="font-weight-medium">Sitio Web</v-list-item-subtitle>
+                                    <v-list-item-title class="font-weight-medium text-subtitle-1">
+                                        +56 {{ item.contact.web }}
+                                    </v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-card>
+                    </div>
+                </v-col>
+            </v-row>
+
+            <p class="text-caption text-center text--secondary mt-3">
+                Desarrollado por Cuik.cl
+            </p>
         </v-container>
 
-        <!-- loading -->
-        <v-overlay :value="loading"></v-overlay>
+        <v-overlay :value="loading" opacity=".9">
+            <div class="text-center">
+                <v-chip large class="font-weight-medium mb-2 black--text" color="white">
+                    Creando CuikCard
+                    <v-progress-circular indeterminate class="ml-3" color="black" width="2" size="20"/>
+                </v-chip>
+
+            </div>
+        </v-overlay>
     </div>
 </template>
 
 <script>
 import Social from "@/mixins/social";
+import {mapState} from "vuex";
 
 export default {
   name: "Profile",
   props: ['data'],
   mixins: [Social],
-  data: () => ({item: {contact: []}, loading: false}),
+  data: () => ({item: {contact: []}, loading: false, themeColor: null}),
 
   watch: {
     data(e) {
       this.item = e
+
+      if (e.themeColor) {
+        this.themeColor = e.themeColor
+      } else {
+        this.themeColor = '#000000'
+      }
     }
+  },
+
+  computed: {
+    ...mapState(['isIOS'])
   },
 
   methods: {
@@ -194,22 +216,19 @@ export default {
 
     createCard(objeto) {
 
-        console.debug('PHOTO: ', objeto.photo ? objeto.photo : 'DONT_PHOTO')
-
-
       const vcard = [
         'BEGIN:VCARD',
         'VERSION:3.0',
         `N:${objeto.lastname};${objeto.firstname};;;`,
         `FN:${objeto.firstname} ${objeto.lastname}`,
-          `ORG:${objeto.organization ? objeto.organization : ''}`,
-          `TITLE:${objeto.title ? objeto.title : ''}`,
-          `TEL;TYPE=Personal:${objeto.contact.tel_home ? '+' + 56 + objeto.contact.tel_home : ''}`,
-          `TEL;TYPE=Trabajo,VOICE:${objeto.contact.tel_work ? '+' + 56 +objeto.contact.tel_work : ''}`,
-          `EMAIL;TYPE=Personal:${objeto.contact.email ? objeto.contact.email : ''}`,
-          `EMAIL;TYPE=Trabajo:${objeto.contact.email_work ? objeto.contact.email_work : ''}`,
-          `URL;TYPE=Sitio Web:${objeto.contact.web ? objeto.contact.web : ''}`,
-          `${objeto.photo ? 'PHOTO;ENCODING=b;TYPE=JPEG:' + objeto.photo : ''}`,
+        `ORG:${objeto.organization ? objeto.organization : ''}`,
+        `TITLE:${objeto.title ? objeto.title : ''}`,
+        `TEL;TYPE=Personal:${objeto.contact.tel_home ? '+' + 56 + objeto.contact.tel_home : ''}`,
+        `TEL;TYPE=Trabajo,VOICE:${objeto.contact.tel_work ? '+' + 56 + objeto.contact.tel_work : ''}`,
+        `EMAIL;TYPE=Personal:${objeto.contact.email ? objeto.contact.email : ''}`,
+        `EMAIL;TYPE=Trabajo:${objeto.contact.email_work ? objeto.contact.email_work : ''}`,
+        `URL;TYPE=Sitio Web:${objeto.contact.web ? objeto.contact.web : ''}`,
+        `${objeto.photo ? 'PHOTO;ENCODING=b;TYPE=JPEG:' + objeto.photo : ''}`,
       ];
 
       if (objeto.social && objeto.social.length > 0) {
@@ -225,7 +244,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
