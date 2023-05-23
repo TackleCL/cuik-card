@@ -30,7 +30,6 @@ export default {
   methods: {
     async onInit(url) {
 
-
       // Buscar por URL
       const q1 = query(collection(db, "users"), where("url", "==", url));
       const querySnapshot1 = await getDocs(q1);
