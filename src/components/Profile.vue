@@ -27,8 +27,11 @@
 
                     <!-- basic -->
                     <div class="profile-basic text-center mt-6">
-                        <h1 class="text-h4 font-weight-medium">Juan Maurelia</h1>
-                        <h6 class="text-subtitle-1 text--secondary">Diseñador UX <span>- Arauco</span></h6>
+                        <h1 class="text-h4 font-weight-medium">{{ `${item.firstname} ${item.lastname}` }}</h1>
+                        <h6 class="text-subtitle-1 text--secondary">
+                            {{ item.title }}
+                            <span v-if="item.organization">- {{ item.organization }}</span>
+                        </h6>
                     </div>
 
                     <!-- social -->
@@ -118,7 +121,7 @@
                                 <v-list-item-content>
                                     <v-list-item-subtitle class="font-weight-medium">Sitio Web</v-list-item-subtitle>
                                     <v-list-item-title class="font-weight-medium text-subtitle-1">
-                                        +56 {{ item.contact.web }}
+                                        www.{{ item.contact.web }}
                                     </v-list-item-title>
                                 </v-list-item-content>
                             </v-list-item>
