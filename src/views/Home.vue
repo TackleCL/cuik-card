@@ -1,7 +1,7 @@
 <template>
     <div id="card-cuik">
         <!-- profile: basic & pro -->
-        <profile-view :data="profile" v-if="profile"/>
+        <profile-view :data="profile" :company="company" v-if="profile"/>
 
         <!-- profile: empty -->
         <profile-empty v-if="profile == null"/>
@@ -13,7 +13,7 @@
 
 <script>
 import {db} from '@/firebase'
-import {query, collection, where, getDocs} from "firebase/firestore";
+import {query, collection, where, getDocs, doc, getDoc} from "firebase/firestore";
 
 import ProfileView from "../components/Profile.vue";
 import ProfileEmpty from "@/components/Empty.vue";
@@ -24,6 +24,7 @@ export default {
 
   data: () => ({
     profile: {},
+    company: {},
     loading: false
   }),
 
@@ -47,12 +48,27 @@ export default {
       }
 
       this.profile = null
+    },
+
+    async onCompany(uid) {
+
+      if (!uid) return;
+
+      const docRef = doc(db, "companies", uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        this.company = docSnap.data()
+      } else {
+        console.error("No such document!");
+      }
     }
   },
 
   async created() {
     this.loading = true
     await this.onInit(this.$route.params.url)
+    await this.onCompany(this.profile.organizationId)
     this.loading = false
   }
 }
