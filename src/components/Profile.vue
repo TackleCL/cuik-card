@@ -1,8 +1,14 @@
 <template>
     <div id="profile">
-        <!--cover/meta-->
-        <meta name="theme-color" :content="themeColor" v-if="themeColor">
-        <v-card flat tile :color="themeColor" height="150"></v-card>
+        <!--meta-->
+        <meta name="theme-color" :content="company.themeColor" v-if="company.themeColor">
+
+        <!-- cover -->
+        <v-card flat tile :color="color" :height="logo ? 285:150">
+            <v-card-text class="d-flex justify-center pt-9" v-if="logo">
+                <v-img :src="logo" :alt="organization" max-height="120" max-width="70%" contain/>
+            </v-card-text>
+        </v-card>
 
         <!--content-->
         <v-container>
@@ -29,15 +35,18 @@
                     <div class="profile-basic text-center mt-6">
                         <h1 class="text-h4 font-weight-medium">{{ `${item.firstname} ${item.lastname}` }}</h1>
                         <h6 class="text-subtitle-1 text--secondary">
-                            {{ item.title }}
-                            <span v-if="item.organization">- {{ item.organization }}</span>
+                            <span v-if="item.title">{{ item.title }}</span>
+                            <span v-if="item.title && item.organization">-</span>
+                            <span v-if="item.organization && !organization">{{ item.organization }}</span>
+                            <span v-if="organization">{{ organization }}</span>
                         </h6>
                     </div>
 
                     <!-- social -->
                     <div class="profile-social text-center mt-6" v-if="data.social">
                         <template v-for="(item, index) in data.social">
-                            <v-btn fab depressed color="blue-grey lighten-5" class="rounded-lg mx-2" :key="index">
+                            <v-btn :href="selected(item).hint + item.username" target="_blank" fab depressed color="blue-grey lighten-5"
+                                   class="rounded-lg mx-2" :key="index">
                                 <v-icon class="text-h4" :color="selected(item).color">{{ selected(item).icon }}</v-icon>
                             </v-btn>
                         </template>
@@ -45,7 +54,7 @@
 
                     <!-- button -->
                     <div class="profile-button px-4 mt-6">
-                        <v-btn x-large dark :color="themeColor" block rounded depressed @click="downloadCard"
+                        <v-btn x-large dark :color="color" block rounded depressed @click="downloadCard"
                                class="font-weight-bold">
                             Agregar Contacto
                         </v-btn>
@@ -153,9 +162,9 @@ import {mapState} from "vuex";
 
 export default {
   name: "Profile",
-  props: ['data'],
+  props: ['data', 'company'],
   mixins: [Social],
-  data: () => ({item: {contact: []}, loading: false, themeColor: null}),
+  data: () => ({item: {contact: []}, loading: false, color: 'black', organization: '', logo: null}),
 
   watch: {
     data(e) {
@@ -166,6 +175,11 @@ export default {
       } else {
         this.themeColor = '#000000'
       }
+    },
+    company(v) {
+      this.logo = v.logo
+      this.color = v.themeColor
+      this.organization = v.name
     }
   },
 
